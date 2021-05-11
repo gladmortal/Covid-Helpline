@@ -6,10 +6,16 @@ from os import environ
 logger = logging.getLogger()
 
 def create_twitter_api():
-    consumer_key = environ['twitter_consumer_key']
-    consumer_secret = environ['consumer_secret']
-    access_token =  environ['access_token']
-    access_token_secret = environ['access_token_secret']
+    consumer_key = "bHCoJVVE0KWTqmupsGiZ9Nqbq"
+    consumer_secret = "QaFFjCkagludjJsBeGa29RGKBhhEHEU4YynZ0YNUnxwDQWBc1u"
+    access_token = "3263024803-RCs752xN0UgOfTBHORjURpbqeVoKbetqrjyPrUD"
+    access_token_secret = "yFFncnHntdOEtgjX9dmJY4fwuY2hQNoAGXFS6H5PkdrWU"
+
+
+    #consumer_key = environ['twitter_consumer_key']
+    #consumer_secret = environ['consumer_secret']
+    #access_token =  environ['access_token']
+    #access_token_secret = environ['access_token_secret']
 
     auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
     auth.set_access_token(access_token, access_token_secret)
@@ -33,5 +39,9 @@ def s3():
 
 
 def database_details():
-    DATABASE_URL = environ['DATABASE_URL']
+    DATABASE_URL = 'postgresql+psycopg2://yqdhxhrzahgtxg:888b0d4cd6b957bb986a33ab8df3d3d9c81d8d2c6ff1462def9959384564af3f@ec2-54-216-185-51.eu-west-1.compute.amazonaws.com:5432/dbvk6d6g6njtfb'
+    return DATABASE_URL
+
+def database_details_web():
+    DATABASE_URL = 'postgresql+psycopg2://yqdhxhrzahgtxg:888b0d4cd6b957bb986a33ab8df3d3d9c81d8d2c6ff1462def9959384564af3f@ec2-54-216-185-51.eu-west-1.compute.amazonaws.com:5432/dbvk6d6g6njtfb'
     return DATABASE_URL

@@ -563,7 +563,7 @@ def input_processing(data_to_match_from,sentence):
 
 def t_main(sentense):
 
-    alchemyEngine   = create_engine(database_details());
+    alchemyEngine   = create_engine(database_details_web());
     dbConnection    = alchemyEngine.connect();
     # Read data from PostgreSQL database table and load into a DataFrame instance
     data_from_table      = pd.read_sql("select * from \"covid_resource_details\" where Time BETWEEN NOW() - INTERVAL '48 HOURS' AND NOW()", dbConnection);
