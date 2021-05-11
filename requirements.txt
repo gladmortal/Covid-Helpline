@@ -12,3 +12,4 @@ textblob==0.15.3
 scikit_learn==0.24.2
 boto3==1.17.62
 psycopg2-binary==2.8.6
+SQLAlchemy==1.4.15
