@@ -58,6 +58,7 @@ from sqlalchemy import create_engine
 import psycopg2
 import io
 from io import StringIO
+from config_fn import *
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
@@ -468,46 +469,53 @@ def insert_data_in_table(data_to_insert):
     return('True')
 
 def new_matching(data_to_match_from,input_frame):
-    tweets_extracted_from_input = data_to_match_from
-    print(tweets_extracted_from_input)
-    df1,df2 = (tweets_extracted_from_input.groupby('question'))
+    answer = data_to_match_from
+    #print(tweets_extracted_from_input)
+    #df1,df2 = (tweets_extracted_from_input.groupby('question'))
     #print(df1)
-    if df1[0] == False:
-        answer = df1[1]
-    if df2[0] == True:
-        NA = df2[1]
+    #if df1[0] == False:
+#        answer = df1[1]
+    #if df2[0] == True:
+#        NA = df2[1]
     print('--------------------NEW MATCHING------------------------')
-    print(answer)
+    print(answer.columns)
     data_to_reply_full = []
     for index, question_row in input_frame.iterrows():
         #print(index)
         #print(question_row)
         for index, answer_row in answer.iterrows():
             data_to_reply = []
-            if(isinstance(answer_row['requirement'],float) == False and isinstance(answer_row['city'],float) == False):
-                a_r = list(answer_row['requirement'].split(" "))
+            print(type(answer_row['requirement_list']))
+            print(type(answer_row['city']))
+
+            if(answer_row['requirement_list'] is not None and answer_row['city'] is not None):
+                a_r = list(answer_row['requirement_list'].split(" "))
                 a_c = list(answer_row['city'].split(" "))
-                vector1 = text_to_vector(question_row['requirement'])
-                vector2 = text_to_vector(answer_row['requirement'])
+                vector1 = text_to_vector(question_row['requirement_list'])
+                vector2 = text_to_vector(answer_row['requirement_list'])
                 score = get_cosine(vector1, vector2)
                 city_match = list(set(question_row['city'].split(" ")).intersection(a_c))
-                if score > 0.6 and len(city_match) > 0 and len(question_row['requirement']) > 0:
+                if score > 0.6 and len(city_match) > 0 and len(question_row['requirement_list']) > 0:
                     q_list = question_row.tolist()
                     a_list = answer_row.tolist()
                     del q_list[0]  # Removing dataframe index
-                    del a_list[0] # Removing dataframe index
+                    #del a_list[0] # Removing dataframe index
                     data_to_reply = a_list
                     data_to_reply.append(score)
                     data_to_reply.append(city_match)
                     response_id = str(q_list[0]) + str(a_list[0])
                     data_to_reply.append(response_id)
+                    print(data_to_reply)
+                    print('########################')
                     data_to_reply_full.append(data_to_reply)
                     print('If any match...')
                     #data_to_reply_full = pd.DataFrame(data_to_reply_full, columns = ['tweet_id', 'time','tweet','user','cleaned_tweet_tokens','question_flag_provider','city_provider','keywords_provider','score','city_match','response_id'])
                     print(data_to_reply_full)
             else:
                 continue
-        data_to_reply_full_df = pd.DataFrame(data_to_reply_full, columns = ['tweet_id', 'time','tweet','user','cleaned_tweet_tokens','question_flag_provider','city_provider','keywords_provider','score','city_match','response_id'])
+        data_to_reply_full_df = pd.DataFrame(data_to_reply_full, columns = ['id','message','provider','time','followers_count','time_inserted','source',
+        'cleaned_tweet_tokens','city','requirement_list','phone_number','extra_details','auto_validation_score','validation_status','validated_by','validation_details',
+        'validated','score','city_match','response_id'])
         return data_to_reply_full_df
 
 
@@ -540,10 +548,10 @@ def input_processing(data_to_match_from,sentence):
     df_input = get_keywords(df_input,'tweet','cleaned_tweet_tokens')
     list_of_keywords_providing_help = list_to_lower(list_of_keywords_providing_help_raw)
     list_of_keywords_asking_help = list_to_lower(list_of_keywords_asking_help_raw)
-    df_input = help_or_resource_new(df_input,'tweet','question')
+    #df_input = help_or_resource_new(df_input,'tweet','question')
     #print(df_input)
     df_input = city_extraction(df_input, 'cleaned_tweet_tokens','city')
-    df_input = requirement_extraction(df_input, 'cleaned_tweet_tokens',list_of_keywords_providing_help,'requirement')
+    df_input = requirement_extraction(df_input, 'cleaned_tweet_tokens',list_of_keywords_providing_help,'requirement_list')
     #print(df_input)
     #file_name = 'processed_data.csv'
     final_data_to_display = new_matching(data_to_match_from,df_input)
@@ -555,30 +563,20 @@ def input_processing(data_to_match_from,sentence):
 
 def t_main(sentense):
 
-    s3 = boto3.resource(
-        service_name='s3',
-        region_name='ap-south-1',
-        aws_access_key_id=  streamlit.secrets["aws_access_key_id"],
-        aws_secret_access_key = streamlit.secrets["aws_secret_access_key"]
-    )
-    #api = create_api()
-    #since_id = 1
-    #MAX_TWEETS = 150
-    #pull_tweets()
-    #final_data_to_reply_file,since_id = tweet_extraction(api,since_id)
-    data_from_s3(s3)
-
-    data_to_match_from = tweet_processing('last_few_hours_data.csv')
+    alchemyEngine   = create_engine(database_details());
+    dbConnection    = alchemyEngine.connect();
+    # Read data from PostgreSQL database table and load into a DataFrame instance
+    data_from_table      = pd.read_sql("select * from \"covid_resource_details\" where Time BETWEEN NOW() - INTERVAL '48 HOURS' AND NOW()", dbConnection);
     #print(data_to_match_from)
     print('Look........')
-    data_to_return = input_processing(data_to_match_from,sentense)
+    data_to_return = input_processing(data_from_table,sentense)
     if isinstance(data_to_return, list):
         return data_to_return
     else:
-        data_to_return = data_to_return.astype({"tweet_id": str})
-        data_to_return['tweet_link'] = data_to_return['tweet_id'].apply(lambda x: f"https://twitter.com/covidhelp/status/{x}")
+        data_to_return = data_to_return.astype({"id": str})
+        data_to_return['link'] = data_to_return['id'].apply(lambda x: f"https://twitter.com/covidhelp/status/{x}")
         data_to_return['time'] = pd.DatetimeIndex(data_to_return['time']) + timedelta(hours=5,minutes=30)
-        data_to_return = data_to_return[['time','tweet', 'city_provider', 'keywords_provider', 'score','tweet_link']]
+        data_to_return = data_to_return[['time','message', 'city','link','score','phone_number']]
         return data_to_return
     #final_data_to_reply_dataframe = pd.read_csv(final_data_to_reply)
     #final_data_to_reply_dataframe.sort_values(by=['tweet_id_requester', 'score'], ascending=False,inplace=True)
