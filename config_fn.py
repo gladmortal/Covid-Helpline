@@ -7,16 +7,11 @@ import streamlit
 logger = logging.getLogger()
 
 def create_twitter_api():
-    consumer_key = "bHCoJVVE0KWTqmupsGiZ9Nqbq"
-    consumer_secret = "QaFFjCkagludjJsBeGa29RGKBhhEHEU4YynZ0YNUnxwDQWBc1u"
-    access_token = "3263024803-RCs752xN0UgOfTBHORjURpbqeVoKbetqrjyPrUD"
-    access_token_secret = "yFFncnHntdOEtgjX9dmJY4fwuY2hQNoAGXFS6H5PkdrWU"
-
-
-    #consumer_key = environ['twitter_consumer_key']
-    #consumer_secret = environ['consumer_secret']
-    #access_token =  environ['access_token']
-    #access_token_secret = environ['access_token_secret']
+    
+    consumer_key = environ['twitter_consumer_key']
+    consumer_secret = environ['consumer_secret']
+    access_token =  environ['access_token']
+    access_token_secret = environ['access_token_secret']
 
     auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
     auth.set_access_token(access_token, access_token_secret)
