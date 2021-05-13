@@ -83,7 +83,8 @@ list_of_keywords_providing_help_raw = ['Oxygen','Oxigen','bed','oxygen','hospita
                                    ,'ventilator','o2','remdisivir','oxygencylinder','fabiflu','covidbeds'
                                    ,'drug','ventilatorbed','blood','plasmadonor','remidesivir','medazolan'
                                    ,'remdivisir','concentrator','cylinder','medicine','400mg','fabi','temi','temiflu','Dexamethasone','OxygenCylinders'
-                                   'Actemra','Remidivisir','oxygenrefill','Baricitinib','favipiravir','favilavir','ambulence','ambulanse','ambulense','HospitalBeds','amulance']
+                                   'Actemra','Remidivisir','oxygenrefill','Baricitinib','favipiravir','favilavir','ambulence','ambulanse','ambulense','HospitalBeds','amulance',
+                                   'liposomal','amphotericin']
 
 list_of_keywords_asking_help_raw = ['friend','admit','serious','Emergency','relative'
                                 ,'Father','Mother','Brother','Sister','Uncle','Grandfather','GrandMother'
@@ -119,8 +120,11 @@ def tweet_extraction(api,since_id):
                 creation_time = tweet_info.created_at
             user_details = api.get_user(user)
             followers_count = user_details.followers_count
-            tweet_details = [tweet_id,creation_time,tweet,user,followers_count]
-            raw_data_list.append(tweet_details)
+            if followers_count < 50:
+                continue
+            else:
+                tweet_details = [tweet_id,creation_time,tweet,user,followers_count]
+                raw_data_list.append(tweet_details)
     df_raw = pd.DataFrame(raw_data_list,columns=['tweet_id','creation_time','tweet','user','followers_count'])
     return df_raw,new_since_id
 
@@ -152,7 +156,9 @@ def cleaned_tweet(x):
             u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
                                "]+", flags=re.UNICODE)
     tweet = emoji_pattern.sub(r'', tweet) # no emoji
-    tweet = re.sub(r"@\w+"," ", tweet)  # Removing Mentions
+    tweet = re.sub(r"@\w+"," ", tweet, flags=re.MULTILINE)  # Removing Mentions
+    tweet = re.sub(r'^https?:\/\/.*[\r\n]*', '', tweet, flags=re.MULTILINE)
+
 
 
     ###### Cleaning ###########
