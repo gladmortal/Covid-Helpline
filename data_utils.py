@@ -84,7 +84,7 @@ list_of_keywords_providing_help_raw = ['Oxygen','Oxigen','bed','oxygen','hospita
                                    ,'drug','ventilatorbed','blood','plasmadonor','remidesivir','medazolan'
                                    ,'remdivisir','concentrator','cylinder','medicine','400mg','fabi','temi','temiflu','Dexamethasone','OxygenCylinders'
                                    'Actemra','Remidivisir','oxygenrefill','Baricitinib','favipiravir','favilavir','ambulence','ambulanse','ambulense','HospitalBeds','amulance',
-                                   'liposomal','amphotericin','toci']
+                                   'liposomal','amphotericin','toci','amphotericin','concentrator']
 
 list_of_keywords_asking_help_raw = ['friend','admit','serious','Emergency','relative'
                                 ,'Father','Mother','Brother','Sister','Uncle','Grandfather','GrandMother'
