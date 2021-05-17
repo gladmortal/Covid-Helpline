@@ -179,8 +179,8 @@ text-align: center;
 }
 </style>
 <div class="footer">
-'''<p>Developed with ❤ by <a style='display: block; text-align: center;' href="https://www.linkedin.com/in/shivamagrawal/" target="_blank">Shivam Agrawal</a></p>'''
+<p>For suggestions/feedback <a style='display: block; text-align: center;' href="mailto:shivam.agrawal@live.com" target="_blank">Email us</a></p>
 </div>
 """
-#st.subheader('')
-#st.markdown(footer,unsafe_allow_html=True)
+st.subheader('')
+st.markdown(footer,unsafe_allow_html=True)
