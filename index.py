@@ -83,16 +83,38 @@ if sentence:
         write = csv.writer(f)
         write.writerow(sen_list)
     with st.spinner('Give us 10-15 seconds, we are fetching & analysing the results for you..'):
-        data_to_view = t_main(sentence)
+        data_to_view_total = t_main(sentence)
         st.success('Done!')
 
     #st.write(data_to_view)
-    if data_to_view.empty:
-        st.write('No result found. Give it one more try and please try to be more specific in your search! - Mention Requirement along with the city')
+    if data_to_view_total.empty:
+        st.write('No result found. Give it one more try and please be more specific in your search! - Mention Requirement along with the city')
     else:
-        data_to_view = data_to_view.sort_values(by=['time','score'], ascending=False)
-        data_to_view['link'] = data_to_view['link'].apply(make_clickable, args = ('Tweet Link',))
-        st.write(data_to_view.head(15).to_html(escape = False), unsafe_allow_html = True)
+        data_to_view_total['validation_status'] = data_to_view_total['validation_status'].str.replace('1', 'Verified')
+        data_to_view_total['link'] = data_to_view_total['link'].apply(make_clickable, args = ('Tweet Link',))
+        #df['validation_status'] = df['validation_status'].str.replace('', 'Verified')
+        validate_list = ['Verified','2','3']
+
+        data_to_view_verified = data_to_view_total[data_to_view_total['validation_status'] == 'Verified']
+        data_to_view_unverified = data_to_view_total[~data_to_view_total['validation_status'].isin(validate_list)]
+        if data_to_view_verified.empty:
+            pass
+        else:
+            st.write("Verified Leads by our volunteers:")
+            data_to_view_verified = data_to_view_verified.sort_values(by=['validated','score'], ascending=False)
+            data_to_view_verified.reset_index(inplace = True)
+            data_to_view_verified.drop(['index'], axis = 1, inplace=True)
+            st.write(data_to_view_verified.head(15).to_html(escape = False), unsafe_allow_html = True)
+
+
+        if data_to_view_unverified.empty:
+            pass
+        else:
+            st.write("Leads:")
+            data_to_view_unverified = data_to_view_unverified.sort_values(by=['time','score'], ascending=False)
+            data_to_view_unverified.reset_index(inplace = True)
+            data_to_view_unverified.drop(['index','validation_status', 'validation_details','validated'], axis = 1, inplace=True)
+            st.write(data_to_view_unverified.head(15).to_html(escape = False), unsafe_allow_html = True)
     #st.table(data_to_view.to_html(escape=False, index=False))
     #st.table(data_to_view.assign(hack='').set_index('hack').to_html(escape=False, index=False))
 
@@ -157,8 +179,8 @@ text-align: center;
 }
 </style>
 <div class="footer">
-<p>Developed with ❤ by <a style='display: block; text-align: center;' href="https://www.linkedin.com/in/shivamagrawal/" target="_blank">Shivam Agrawal</a></p>
+'''<p>Developed with ❤ by <a style='display: block; text-align: center;' href="https://www.linkedin.com/in/shivamagrawal/" target="_blank">Shivam Agrawal</a></p>'''
 </div>
 """
-st.subheader('')
-st.markdown(footer,unsafe_allow_html=True)
+#st.subheader('')
+#st.markdown(footer,unsafe_allow_html=True)

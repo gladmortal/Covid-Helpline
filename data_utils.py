@@ -84,7 +84,7 @@ list_of_keywords_providing_help_raw = ['Oxygen','Oxigen','bed','oxygen','hospita
                                    ,'drug','ventilatorbed','blood','plasmadonor','remidesivir','medazolan'
                                    ,'remdivisir','concentrator','cylinder','medicine','400mg','fabi','temi','temiflu','Dexamethasone','OxygenCylinders'
                                    'Actemra','Remidivisir','oxygenrefill','Baricitinib','favipiravir','favilavir','ambulence','ambulanse','ambulense','HospitalBeds','amulance',
-                                   'liposomal','amphotericin']
+                                   'liposomal','amphotericin','toci']
 
 list_of_keywords_asking_help_raw = ['friend','admit','serious','Emergency','relative'
                                 ,'Father','Mother','Brother','Sister','Uncle','Grandfather','GrandMother'
@@ -580,9 +580,13 @@ def t_main(sentense):
         return data_to_return
     else:
         data_to_return = data_to_return.astype({"id": str})
+        print('data from db....')
+        print(data_to_return)
         data_to_return['link'] = data_to_return['id'].apply(lambda x: f"https://twitter.com/covidhelp/status/{x}")
         data_to_return['time'] = pd.DatetimeIndex(data_to_return['time']) + timedelta(hours=5,minutes=30)
-        data_to_return = data_to_return[['time','message', 'city','link','score','phone_number']]
+        data_to_return['validated'] = pd.DatetimeIndex(data_to_return['validated']) + timedelta(hours=5,minutes=30)
+        data_to_return = data_to_return[['time','message', 'city','link','score','phone_number','validation_status','validation_details','validated']]
+        print(data_to_return.shape[0])
         return data_to_return
     #final_data_to_reply_dataframe = pd.read_csv(final_data_to_reply)
     #final_data_to_reply_dataframe.sort_values(by=['tweet_id_requester', 'score'], ascending=False,inplace=True)
