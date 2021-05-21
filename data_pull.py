@@ -81,7 +81,7 @@ def twitter_data():
                 'extra_details':'extra_details','auto_validation_score':'auto_validation_score','validation_status':'validation_status','validated_by':'validated_by','validation_details':'validation_details'}, inplace = True)
 
                 #####  Inserting into the database ###########
-                engine = create_engine('postgresql+psycopg2://yqdhxhrzahgtxg:888b0d4cd6b957bb986a33ab8df3d3d9c81d8d2c6ff1462def9959384564af3f@ec2-54-216-185-51.eu-west-1.compute.amazonaws.com:5432/dbvk6d6g6njtfb')
+                engine = create_engine(database_details())
                 df_tweets_with_requirement.to_sql('covid_resource_details', engine,if_exists='append', method=psql_insert_copy,index=False)
                 time.sleep(120)
             else:
