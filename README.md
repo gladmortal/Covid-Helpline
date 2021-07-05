@@ -9,4 +9,5 @@ However, there is a requirement to consolidate these leads and ensure this infor
 
 To solution this, I have designed this portal.  which is aimed to help the affected people to find the right resources in their city and meet their requirements in a real time basis. The system collects the data from different sources, processes it, runs it through multiple machine learning models to extract details, validates the content and shows to the user who is looking for these details. 
 
-![Uploading Screenshot 2021-05-17 at 2.05.12 PM.png…]()
+
+![Screenshot 2021-05-17 at 2 05 12 PM](https://user-images.githubusercontent.com/8189413/124466012-c17cd400-ddb3-11eb-8038-c5602f9a9526.png)
